@@ -82,7 +82,12 @@ class VertxHttp2Verticle(val options: VuuHttp2ServerOptions, val services: List[
       allowedMethods.add(HttpMethod.PATCH)
       allowedMethods.add(HttpMethod.PUT)
 
-      router.route.handler(CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods))
+      router.route.handler(
+        CorsHandler.create()
+          .addOrigin("*")
+          .allowedHeaders(allowedHeaders)
+          .allowedMethods(allowedMethods)
+      )
 
       services.foreach(service => addRestService(router, service))
 
@@ -102,17 +107,11 @@ class VertxHttp2Verticle(val options: VuuHttp2ServerOptions, val services: List[
           PathChecker.throwOnDirectoryNotExists(path, "webroot path does not exist:")
 
           router.route("/public/*")
-            .handler(StaticHandler.create()
-              .setWebRoot(path)
-              .setDirectoryListing(directoryListings)
-            )
+            .handler(StaticHandler.create(path).setDirectoryListing(directoryListings))
 
           // Serve the static pages
           router.route("/*")
-            .handler(StaticHandler.create()
-              .setWebRoot(path)
-              .setDirectoryListing(directoryListings)
-            )
+            .handler(StaticHandler.create(path).setDirectoryListing(directoryListings))
         }
       }
 
@@ -129,9 +128,9 @@ class VertxHttp2Verticle(val options: VuuHttp2ServerOptions, val services: List[
     options match {
       case VuuSSLDisabled() => new HttpServerOptions().setSsl(false)
       case VuuSSLByCertAndKey(certPath, keyPath, _, cipherSuite) =>
-        applySharedOptions(new HttpServerOptions().setPemKeyCertOptions(pemKeyCertOptions(certPath, keyPath)), cipherSuite)
+        applySharedOptions(new HttpServerOptions().setKeyCertOptions(pemKeyCertOptions(certPath, keyPath)), cipherSuite)
       case VuuSSLByPKCS(pkcsPath, pkcsPassword, cipherSuite) =>
-        applySharedOptions(new HttpServerOptions().setPfxKeyCertOptions(pfxKeyCertOptions(pkcsPath, pkcsPassword)), cipherSuite)
+        applySharedOptions(new HttpServerOptions().setKeyCertOptions(pfxKeyCertOptions(pkcsPath, pkcsPassword)), cipherSuite)
     }
   }
 
