@@ -13,9 +13,11 @@ trait IndexedField[TYPE] {
 
   protected val empty: ImmutableArray[String] = ImmutableArray.empty
 
-  def insert(indexedValue: TYPE, rowKeys: String): Unit
+  def insert(indexedValue: TYPE, rowKey: String): Unit
 
-  def remove(indexedValue: TYPE, rowKeys: String): Unit
+  def replace(oldIndexedValue: TYPE, newIndexedValue: TYPE, rowKey: String): Unit
+  
+  def remove(indexedValue: TYPE, rowKey: String): Unit
 
   def column: Column
 

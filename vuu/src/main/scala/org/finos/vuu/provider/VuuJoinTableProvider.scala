@@ -205,7 +205,7 @@ class VuuJoinTableProvider(options: VuuJoinTableProviderOptions)(implicit lifecy
         //if so, publish a left table event for the right inbound event
         val leftKey = eventToLeftKey(joinTableDef, ev)
         logger.trace(s"Publishing update for left key: $leftKey to table $tableName")
-        publishUpdateForLeftTableAndKey(joinTableDef, defAndTable.table.asInstanceOf[JoinTable], tableName, leftKey, ev, isJoinEvent)
+        publishUpdateForLeftTableAndKey(joinTableDef, defAndTable.table, tableName, leftKey, ev, isJoinEvent)
 
       //otherwise must be a right table, i.e. any one of the joinTo tables
       } else {
@@ -220,7 +220,7 @@ class VuuJoinTableProvider(options: VuuJoinTableProviderOptions)(implicit lifecy
         //for each key in left table, send left update, including additional keys
         leftKeys.foreach(key => {
           logger.trace(s"Publishing update for left key: $key to table ${joinTableDef.baseTable.name}")
-          publishUpdateForLeftTableAndKey(joinTableDef, defAndTable.table.asInstanceOf[JoinTable], joinTableDef.baseTable.name,
+          publishUpdateForLeftTableAndKey(joinTableDef, defAndTable.table, joinTableDef.baseTable.name,
             key, joinSink.getEventDataSink(joinTableDef.baseTable.name).getEventState(key), isJoinEvent)
         })
       }
