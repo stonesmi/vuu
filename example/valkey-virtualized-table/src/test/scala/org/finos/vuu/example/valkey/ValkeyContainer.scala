@@ -7,7 +7,7 @@ import org.testcontainers.utility.DockerImageName
 import org.testcontainers.containers.GenericContainer as JavaGenericContainer
 import org.testcontainers.containers.output.Slf4jLogConsumer
 
-class ValkeyContainer(tag: String = "8.0") extends GenericContainer(
+class ValkeyContainer(tag: String = "8") extends GenericContainer(
   ValkeyContainer.createContainer(tag)
 ) {
 
@@ -20,7 +20,7 @@ class ValkeyContainer(tag: String = "8.0") extends GenericContainer(
 object ValkeyContainer {
 
   private val logger = LoggerFactory.getLogger(ValkeyContainer.getClass)
-  val imageName = "valkey/valkey"
+  val imageName = "valkey/valkey-bundle"
   val port = 6379
 
   private def createContainer(tag: String): JavaGenericContainer[_] = {
@@ -34,5 +34,5 @@ object ValkeyContainer {
     c
   }
 
-  def apply(tag: String = "8.0"): ValkeyContainer = new ValkeyContainer(tag)
+  def apply(tag: String = "8"): ValkeyContainer = new ValkeyContainer(tag)
 }

@@ -9,11 +9,6 @@ trait ColumnValueProvider {
   def getUniqueValuesVPColumn(columnName: String, viewPortColumns: ViewPortColumns, vpKeys: ViewPortKeys): Array[String]
   def getUniqueValuesStartingWithVPColumn(columnName: String, starts: String, viewPortColumns: ViewPortColumns, vpKeys: ViewPortKeys): Array[String]
 
-  @deprecated("to be replaced by getUniqueValuesVPColumn")
-  def getUniqueValues(columnName: String): Array[String]
-  @deprecated("to be replaced by getUniqueValuesStartingWithVPColumn")
-  def getUniqueValuesStartingWith(columnName: String, starts: String): Array[String]
-
 }
 
 object InMemColumnValueProvider {
@@ -42,18 +37,6 @@ class InMemColumnValueProvider(dataTable: DataTable) extends ColumnValueProvider
       case None => logger.error(s"Column $columnName not found in table ${dataTable.name}"); Array.empty;
     }
   }
-
-  override def getUniqueValues(columnName: String): Array[String] =
-    dataTable.columnForName(columnName) match {
-      case c: Column => get10DistinctValues.fromTable(c)
-      case null => logger.error(s"Column $columnName not found in table ${dataTable.name}"); Array.empty;
-    }
-
-  override def getUniqueValuesStartingWith(columnName: String, starts: String): Array[String] =
-    dataTable.columnForName(columnName) match {
-      case c: Column => get10DistinctValues.fromTable(c, _.toLowerCase.startsWith(starts.toLowerCase))
-      case null => logger.error(s"Column $columnName not found in table ${dataTable.name}"); Array.empty;
-    }
 
   private case class DistinctValuesGetter(n: Int) {
     private type Filter = String => Boolean

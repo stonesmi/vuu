@@ -4,16 +4,14 @@ import com.dimafeng.testcontainers.ForAllTestContainer
 import org.finos.toolbox.jmx.{MetricsProvider, MetricsProviderImpl}
 import org.finos.toolbox.lifecycle.LifecycleContainer
 import org.finos.toolbox.time.{Clock, DefaultClock}
+import org.finos.vuu.example.valkey.ValkeyContainer
+import org.finos.vuu.example.valkey.client.options.ValkeyClientOptions
 import org.scalatest.GivenWhenThen
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
-import org.finos.vuu.example.valkey.ValkeyContainer
-import org.finos.vuu.example.valkey.client.options.ValkeyClientOptions
+import org.finos.vuu.example.valkey.ValkeyTestBase
 
-class ValkeyClientTest
-  extends AnyFeatureSpec with GivenWhenThen with Matchers with ForAllTestContainer {
-
-  override val container: ValkeyContainer = ValkeyContainer()
+class ValkeyClientTest extends ValkeyTestBase {
 
   Feature("Test we can connect to a remote Valkey") {
 
