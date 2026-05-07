@@ -44,13 +44,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.dimafeng</groupId>
-            <artifactId>testcontainers-scala-scalatest_3</artifactId>
-            <version>${testcontainers.scalatest.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>

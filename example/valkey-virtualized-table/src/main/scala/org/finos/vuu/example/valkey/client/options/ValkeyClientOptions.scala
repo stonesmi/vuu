@@ -1,5 +1,7 @@
 package org.finos.vuu.example.valkey.client.options
 
+import io.valkey.HostAndPortMapper
+
 trait ValkeyClientOptions {
 
   def nodes: Set[(String, Int)]
@@ -8,6 +10,7 @@ trait ValkeyClientOptions {
   def maxTotal: Int
   def maxIdle: Int
   def minIdle: Int
+  def hostAndPortMapper: Option[HostAndPortMapper]
   def withNode(host: String, port: Int): ValkeyClientOptions
   def withNodes(nodes: Set[(String, Int)]): ValkeyClientOptions
   def withTimeoutMs(timeoutMs: Int): ValkeyClientOptions
@@ -15,6 +18,7 @@ trait ValkeyClientOptions {
   def withMaxTotal(maxTotal: Int): ValkeyClientOptions
   def withMaxIdle(maxIdle: Int): ValkeyClientOptions
   def withMinIdle(minIdle: Int): ValkeyClientOptions
+  def withHostAndPortMapper(hostAndPortMapper: HostAndPortMapper): ValkeyClientOptions
 }
 
 object ValkeyClientOptions {
@@ -26,7 +30,8 @@ object ValkeyClientOptions {
       maxAttempts = Int.MaxValue,
       maxTotal = 8,
       maxIdle = 8,
-      minIdle = 4
+      minIdle = 4,
+      None
     )
   }
 
@@ -37,7 +42,8 @@ private case class ValkeyClientOptionsImpl(nodes: Set[(String, Int)],
                                            maxAttempts: Int,
                                            maxTotal: Int,
                                            maxIdle: Int,
-                                           minIdle: Int) extends ValkeyClientOptions {
+                                           minIdle: Int,
+                                           hostAndPortMapper: Option[HostAndPortMapper]) extends ValkeyClientOptions {
 
   override def withNode(host: String, port: Int): ValkeyClientOptions = this.copy(nodes = Set((host, port)))
 
@@ -52,4 +58,6 @@ private case class ValkeyClientOptionsImpl(nodes: Set[(String, Int)],
   override def withMaxIdle(maxIdle: Int): ValkeyClientOptions = this.copy(maxIdle = maxIdle)
 
   override def withMinIdle(minIdle: Int): ValkeyClientOptions = this.copy(minIdle = minIdle)
+
+  override def withHostAndPortMapper(hostAndPortMapper: HostAndPortMapper): ValkeyClientOptions = this.copy(hostAndPortMapper = Option(hostAndPortMapper))
 }
