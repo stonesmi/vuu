@@ -1,22 +1,17 @@
 package org.finos.vuu.example.valkey
 
 import com.typesafe.scalalogging.StrictLogging
-import io.valkey.params.ScanParams
-import io.valkey.{HostAndPortMapper, Jedis, JedisCluster, JedisPooled, UnifiedJedis}
-import org.finos.vuu.example.valkey.client.ValkeyClient
-import org.finos.vuu.viewport.InMemViewPortCallable.logger
+import io.valkey.JedisCluster
+import org.finos.vuu.example.valkey.common.ShardRouter
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.{BeforeAndAfterAll, GivenWhenThen}
 
 import scala.jdk.CollectionConverters.*
-import scala.util.Using
-import scala.util.control.NonFatal
 
 class ValkeyTestBase extends AnyFeatureSpec with BeforeAndAfterAll with Matchers with StrictLogging {
 
   protected final val container: ValkeyClusterContainer = ValkeyClusterContainer()
-  protected final val shardRouter = ShardRouter(container.getClusterSize)
   protected final val orderHSetName = "order"
 
   override def beforeAll(): Unit = {
@@ -27,11 +22,6 @@ class ValkeyTestBase extends AnyFeatureSpec with BeforeAndAfterAll with Matchers
   override def afterAll(): Unit = {
     container.stop()
     super.afterAll()
-  }
-
-  protected def getKey(orderId: String): String = {
-    val shardTag = shardRouter.shardTag(orderId)
-    s"$orderHSetName:$shardTag:$orderId"
   }
 
   protected def insertOrder(
@@ -47,8 +37,8 @@ class ValkeyTestBase extends AnyFeatureSpec with BeforeAndAfterAll with Matchers
     val pipeline = jedis.pipelined()
     try {
 
-      val shardTag = shardRouter.shardTag(orderId)
-      val key = s"$orderHSetName:$shardTag:$orderId"
+      val shardTag = ShardRouter.shardTag(orderId)
+      val key = ShardRouter.shardedKey(orderHSetName, orderId)
 
       val fields = Map(
         "orderId" -> orderId,
@@ -58,10 +48,10 @@ class ValkeyTestBase extends AnyFeatureSpec with BeforeAndAfterAll with Matchers
         "ric" -> ric,
         "currency" -> currency,
         "trader" -> trader
-      )
+      ) //TODO Move this to binary
       pipeline.hset(key, fields.asJava)
       //filter indices
-      pipeline.sadd(s"idx-$orderHSetName:$shardTag:ric:$ric", ric)
+      pipeline.sadd(s"idx-$orderHSetName:$shardTag:ric:$ric", orderId)
 
       //sort indices
       pipeline.zadd(s"idx-$orderHSetName:$shardTag:sort:quantity", quantity, orderId)

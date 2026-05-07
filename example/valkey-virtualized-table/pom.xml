@@ -11,6 +11,10 @@
     <artifactId>valkey-virtualized-table</artifactId>
     <name>${project.artifactId}</name>
 
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.finos.vuu</groupId>
