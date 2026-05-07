@@ -13,7 +13,7 @@ class ViewportTypeAheadRpcHandler(tableContainer: TableContainer) {
     rpcRegistry.registerRpc(RpcNames.UniqueFieldValuesStartWithRpc, params => processGetUniqueFieldValuesStartWithRequest(params))
   }
 
-  def processGetUniqueFieldValuesRequest(params: RpcParams): RpcFunctionResult = {
+  private def processGetUniqueFieldValuesRequest(params: RpcParams): RpcFunctionResult = {
 
     val inputParam =  params.namedParams
 
@@ -28,7 +28,7 @@ class ViewportTypeAheadRpcHandler(tableContainer: TableContainer) {
     new RpcFunctionSuccess(values)
   }
 
-  def processGetUniqueFieldValuesStartWithRequest(params: RpcParams): RpcFunctionResult = {
+  private def processGetUniqueFieldValuesStartWithRequest(params: RpcParams): RpcFunctionResult = {
 
     val inputParam =  params.namedParams
 
@@ -45,7 +45,7 @@ class ViewportTypeAheadRpcHandler(tableContainer: TableContainer) {
   }
 
 
-  def getUniqueFieldValues(tableName: String, moduleName: String, column: String, viewPortColumns: ViewPortColumns, vpKeys: ViewPortKeys, ctx: RequestContext): Array[String] = {
+  private def getUniqueFieldValues(tableName: String, moduleName: String, column: String, viewPortColumns: ViewPortColumns, vpKeys: ViewPortKeys, ctx: RequestContext): Array[String] = {
     tableContainer.getTable(tableName) match {
       case dataTable: DataTable =>
         val columValueProvider = dataTable.getColumnValueProvider
@@ -55,7 +55,7 @@ class ViewportTypeAheadRpcHandler(tableContainer: TableContainer) {
     }
   }
 
-  def getUniqueFieldValuesStartingWith(tableName: String, moduleName: String, column: String, starts: String, viewPortColumns: ViewPortColumns, vpKeys: ViewPortKeys, ctx: RequestContext): Array[String] = {
+  private def getUniqueFieldValuesStartingWith(tableName: String, moduleName: String, column: String, starts: String, viewPortColumns: ViewPortColumns, vpKeys: ViewPortKeys, ctx: RequestContext): Array[String] = {
     tableContainer.getTable(tableName) match {
       case dataTable: DataTable =>
         val columValueProvider = dataTable.getColumnValueProvider

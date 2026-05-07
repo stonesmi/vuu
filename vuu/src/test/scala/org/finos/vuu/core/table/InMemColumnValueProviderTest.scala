@@ -1,12 +1,13 @@
 package org.finos.vuu.core.table
 
+import org.finos.toolbox.collection.array.ImmutableArray
 import org.finos.toolbox.jmx.{MetricsProvider, MetricsProviderImpl}
 import org.finos.toolbox.lifecycle.LifecycleContainer
 import org.finos.toolbox.time.{Clock, TestFriendlyClock}
 import org.finos.vuu.api.TableDef
+import org.finos.vuu.feature.inmem.{InMemTablePrimaryKeys, InMemViewPortKeys}
 import org.finos.vuu.provider.{JoinTableProviderImpl, MockProvider}
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.Assertions
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -32,7 +33,10 @@ class InMemColumnValueProviderTest extends AnyFeatureSpec with Matchers with Moc
       provider.tick("2", Map("id" -> "2", "ric" -> "BT.L", "bid" -> 500, "ask" -> 550))
       provider.tick("3", Map("id" -> "3", "ric" -> "VOD.L", "bid" -> 240, "ask" -> 244))
 
-      val uniqueValues = columnValueProvider.getUniqueValues("ric")
+      val keys = InMemViewPortKeys(InMemTablePrimaryKeys(ImmutableArray.from(List("1", "2", "3"))))
+      val vpColumns = ViewPortColumnCreator.create(table)
+      
+      val uniqueValues = columnValueProvider.getUniqueValuesVPColumn("ric", vpColumns, keys)
 
       uniqueValues should contain theSameElementsAs Vector("BT.L", "VOD.L")
     }
@@ -46,7 +50,10 @@ class InMemColumnValueProviderTest extends AnyFeatureSpec with Matchers with Moc
       provider.tick("2", Map("id" -> "2", "ric" -> null, "bid" -> 500, "ask" -> 550))
       provider.tick("3", Map("id" -> "3", "ric" ->  "VOD.L", "bid" -> 240, "ask" -> 244))
 
-      val uniqueValues = columnValueProvider.getUniqueValues("ric")
+      val keys = InMemViewPortKeys(InMemTablePrimaryKeys(ImmutableArray.from(List("1", "2", "3"))))
+      val vpColumns = ViewPortColumnCreator.create(table)
+      
+      val uniqueValues = columnValueProvider.getUniqueValuesVPColumn("ric", vpColumns, keys)
 
       uniqueValues should contain theSameElementsAs Vector("VOD.L")
 
@@ -60,7 +67,10 @@ class InMemColumnValueProviderTest extends AnyFeatureSpec with Matchers with Moc
       provider.tick("1", Map("id" -> "1", "ric" -> null, "bid" -> 220, "ask" -> 223))
       provider.tick("2", Map("id" -> "2", "ric" -> null, "bid" -> 500, "ask" -> 550))
 
-      val uniqueValues = columnValueProvider.getUniqueValues("ric")
+      val keys = InMemViewPortKeys(InMemTablePrimaryKeys(ImmutableArray.from(List("1", "2"))))
+      val vpColumns = ViewPortColumnCreator.create(table)
+
+      val uniqueValues = columnValueProvider.getUniqueValuesVPColumn("ric", vpColumns, keys)
 
       uniqueValues shouldBe empty
     }
@@ -75,7 +85,10 @@ class InMemColumnValueProviderTest extends AnyFeatureSpec with Matchers with Moc
       provider.tick("3", Map("id" -> "3", "ric" -> "VOV.L", "bid" -> 240, "ask" -> 244))
       provider.tick("4", Map("id" -> "4", "ric" -> null, "bid" -> 240, "ask" -> 244))
 
-      val uniqueValues = columnValueProvider.getUniqueValuesStartingWith("ric", "VO")
+      val keys = InMemViewPortKeys(InMemTablePrimaryKeys(ImmutableArray.from(List("1", "2", "3", "4"))))
+      val vpColumns = ViewPortColumnCreator.create(table)
+      
+      val uniqueValues = columnValueProvider.getUniqueValuesStartingWithVPColumn("ric", "VO", vpColumns, keys)
 
       uniqueValues should contain theSameElementsAs Vector("VOA.L", "VOV.L")
     }
@@ -90,7 +103,10 @@ class InMemColumnValueProviderTest extends AnyFeatureSpec with Matchers with Moc
       provider.tick("3", Map("id" -> "3", "ric" -> "VOV.L", "bid" -> 240, "ask" -> 244))
       provider.tick("4", Map("id" -> "4", "ric" -> null, "bid" -> 240, "ask" -> 244))
 
-      val uniqueValues = columnValueProvider.getUniqueValuesStartingWith("ric", "vo")
+      val keys = InMemViewPortKeys(InMemTablePrimaryKeys(ImmutableArray.from(List("1", "2", "3", "4"))))
+      val vpColumns = ViewPortColumnCreator.create(table)
+
+      val uniqueValues = columnValueProvider.getUniqueValuesStartingWithVPColumn("ric", "vo", vpColumns, keys)
 
       uniqueValues should contain theSameElementsAs Vector("VOA.L", "VOV.L")
     }

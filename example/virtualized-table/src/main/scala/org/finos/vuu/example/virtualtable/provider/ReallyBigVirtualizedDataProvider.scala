@@ -80,10 +80,6 @@ class ReallyBigVirtualizedDataProvider(implicit clock: Clock) extends Virtualize
 
   override val lifecycleId: String = "org.finos.vuu.example.virtualtable.provider.ReallyBigVirtualizedDataProvider"
 
-  override def getUniqueValues(columnName: String): Array[String] = ???
-
-  override def getUniqueValuesStartingWith(columnName: String, starts: String): Array[String] = ???
-
   override def getUniqueValuesVPColumn(columnName: String, viewPortColumns: ViewPortColumns, vpKeys: ViewPortKeys): Array[String] = ???
 
   override def getUniqueValuesStartingWithVPColumn(columnName: String, starts: String, viewPortColumns: ViewPortColumns, vpKeys: ViewPortKeys): Array[String] = ???
